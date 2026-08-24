@@ -1,4 +1,4 @@
-import { DiscCondition, SleeveCondition } from '@/common/enums';
+import type { DiscCondition, SleeveCondition } from '@/common/enums';
 
 /**
  * Discogs Search Result item DTO.
@@ -92,4 +92,64 @@ export interface IDiscogsConnector {
   searchReleases(query: string): Promise<DiscogsSearchResult[]>;
   getRelease(releaseId: string): Promise<DiscogsRelease>;
   publishListing(params: PublishListingParams): Promise<PublishListingResult>;
+}
+
+/**
+ * Parameters for searchReleases service operation.
+ */
+export interface SearchReleasesServiceParams {
+  tenantId: string;
+  query: string;
+  token?: string;
+}
+
+/**
+ * Parameters for attachDiscogsRelease service operation.
+ */
+export interface AttachReleaseServiceParams {
+  tenantId: string;
+  productId: string;
+  releaseId: string;
+  token?: string;
+}
+
+/**
+ * Parameters for checkDiscogsCompleteness service operation.
+ */
+export interface CheckCompletenessServiceParams {
+  tenantId: string;
+  sellableUnitId: string;
+}
+
+/**
+ * Parameters for publishDiscogs service operation.
+ */
+export interface PublishDiscogsServiceParams {
+  tenantId: string;
+  sellableUnitId: string;
+  token?: string;
+}
+
+/**
+ * Result returned by publishDiscogs service operation.
+ */
+export interface PublishDiscogsServiceResult {
+  channelListing: Record<string, unknown>;
+  discogsResult: PublishListingResult;
+}
+
+/**
+ * Parameters for simulateDiscogsSale service operation.
+ */
+export interface SimulateSaleServiceParams {
+  tenantId: string;
+  sellableUnitId: string;
+}
+
+/**
+ * Result returned by simulateDiscogsSale service operation.
+ */
+export interface SimulateSaleResult {
+  sellableUnit: Record<string, unknown>;
+  channelListing: Record<string, unknown>;
 }
