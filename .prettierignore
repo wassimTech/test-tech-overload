@@ -1,0 +1,19 @@
+# Agent skills & internal prompts
+.agents/
+.claude/
+
+# Package managers & dependencies
+node_modules
+package-lock.json
+
+# Builds & caches
+.next
+dist
+build
+.strapi
+.strapi-updater.json
+exports
+coverage
+
+# Environment
+.env*

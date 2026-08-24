@@ -1,0 +1,84 @@
+# ==============================================================================
+# Dependencies
+# ==============================================================================
+node_modules/
+*/node_modules/
+.pnp
+.pnp.js
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ==============================================================================
+# Environment & Secrets (NEVER COMMIT)
+# ==============================================================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+!.env.example
+!*/.env.example
+
+# ==============================================================================
+# Build & Output Directories
+# ==============================================================================
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Strapi
+backend/dist/
+backend/build/
+backend/.strapi/
+backend/exports/
+backend/.tmp/
+backend/.strapi-updater.json
+backend/.strapi-cloud.json
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+
+# ==============================================================================
+# Logs & Databases
+# ==============================================================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lcov.info
+coverage/
+*.sqlite
+*.sqlite3
+*.db
+
+# ==============================================================================
+# Operating System & IDE
+# ==============================================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.tsbuildinfo
+
+# ==============================================================================
+# Docker volumes / persistence (if mounted locally)
+# ==============================================================================
+postgres_data/
+pgadmin_data/

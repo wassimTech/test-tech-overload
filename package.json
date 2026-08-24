@@ -1,0 +1,29 @@
+{
+  "name": "test-tech-overload",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vinyl Backoffice and Discogs Marketplace Sync Platform",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev:backend": "npm run develop --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev": "concurrently -n \"STRAPI,NEXT\" -c \"magenta,cyan\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "npm run build --workspaces",
+    "lint": "npm run lint --workspaces",
+    "check": "npm run check --workspaces",
+    "format": "prettier --write \"backend/src/**/*.{ts,tsx,json,md}\" \"backend/config/**/*.{ts,json}\" \"frontend/src/**/*.{ts,tsx,json,md,css}\"",
+    "format:check": "prettier --check \"backend/src/**/*.{ts,tsx,json,md}\" \"backend/config/**/*.{ts,json}\" \"frontend/src/**/*.{ts,tsx,json,md,css}\"",
+    "docker:up": "docker compose --profile dev up -d",
+    "docker:down": "docker compose --profile dev down",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.5.3"
+  }
+}
