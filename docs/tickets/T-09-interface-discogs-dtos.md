@@ -30,9 +30,9 @@ interface IDiscogsConnector {
 
 ## Critères d'acceptation
 
-- [ ] Aucun `any` type
-- [ ] `tsc --noEmit` passe
-- [ ] Chaque DTO a des types stricts
+- [x] Aucun `any` type
+- [x] `tsc --noEmit` passe
+- [x] Chaque DTO a des types stricts
 
 ## Dépendances
 

@@ -1,7 +1,7 @@
-import tenantSchema from '../src/api/tenant/content-types/tenant/schema.json';
-import tenantController from '../src/api/tenant/controllers/tenant';
-import tenantService from '../src/api/tenant/services/tenant';
-import tenantRoutes from '../src/api/tenant/routes/tenant';
+import tenantSchema from '@/api/tenant/content-types/tenant/schema.json';
+import tenantController from '@/api/tenant/controllers/tenant';
+import tenantService from '@/api/tenant/services/tenant';
+import tenantRoutes from '@/api/tenant/routes/tenant';
 
 describe('Tenant Content Type', () => {
   describe('Schema Definition', () => {

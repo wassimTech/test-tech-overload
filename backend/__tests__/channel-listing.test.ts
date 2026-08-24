@@ -1,8 +1,8 @@
-import channelListingSchema from '../src/api/channel-listing/content-types/channel-listing/schema.json';
-import channelListingController from '../src/api/channel-listing/controllers/channel-listing';
-import channelListingService from '../src/api/channel-listing/services/channel-listing';
-import channelListingRoutes from '../src/api/channel-listing/routes/channel-listing';
-import { ChannelType, ChannelListingStatus } from '../src/common/enums';
+import channelListingSchema from '@/api/channel-listing/content-types/channel-listing/schema.json';
+import channelListingController from '@/api/channel-listing/controllers/channel-listing';
+import channelListingService from '@/api/channel-listing/services/channel-listing';
+import channelListingRoutes from '@/api/channel-listing/routes/channel-listing';
+import { ChannelType, ChannelListingStatus } from '@/common/enums';
 
 describe('ChannelListing Content Type', () => {
   describe('Schema Definition', () => {

@@ -1,8 +1,8 @@
-import productSchema from '../src/api/product/content-types/product/schema.json';
-import productController from '../src/api/product/controllers/product';
-import productService from '../src/api/product/services/product';
-import productRoutes from '../src/api/product/routes/product';
-import { ProductType } from '../src/common/enums';
+import productSchema from '@/api/product/content-types/product/schema.json';
+import productController from '@/api/product/controllers/product';
+import productService from '@/api/product/services/product';
+import productRoutes from '@/api/product/routes/product';
+import { ProductType } from '@/common/enums';
 
 describe('Product Content Type', () => {
   describe('Schema Definition', () => {

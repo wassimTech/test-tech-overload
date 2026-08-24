@@ -1,8 +1,8 @@
-import sellableUnitSchema from '../src/api/sellable-unit/content-types/sellable-unit/schema.json';
-import sellableUnitController from '../src/api/sellable-unit/controllers/sellable-unit';
-import sellableUnitService from '../src/api/sellable-unit/services/sellable-unit';
-import sellableUnitRoutes from '../src/api/sellable-unit/routes/sellable-unit';
-import { DiscCondition, SleeveCondition, SellableUnitStatus } from '../src/common/enums';
+import sellableUnitSchema from '@/api/sellable-unit/content-types/sellable-unit/schema.json';
+import sellableUnitController from '@/api/sellable-unit/controllers/sellable-unit';
+import sellableUnitService from '@/api/sellable-unit/services/sellable-unit';
+import sellableUnitRoutes from '@/api/sellable-unit/routes/sellable-unit';
+import { DiscCondition, SleeveCondition, SellableUnitStatus } from '@/common/enums';
 
 describe('SellableUnit Content Type', () => {
   describe('Schema Definition', () => {

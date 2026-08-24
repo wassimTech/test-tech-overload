@@ -1,8 +1,8 @@
-import marketplaceSyncEventSchema from '../src/api/marketplace-sync-event/content-types/marketplace-sync-event/schema.json';
-import marketplaceSyncEventController from '../src/api/marketplace-sync-event/controllers/marketplace-sync-event';
-import marketplaceSyncEventService from '../src/api/marketplace-sync-event/services/marketplace-sync-event';
-import marketplaceSyncEventRoutes from '../src/api/marketplace-sync-event/routes/marketplace-sync-event';
-import { ChannelType, SyncAction, SyncStatus } from '../src/common/enums';
+import marketplaceSyncEventSchema from '@/api/marketplace-sync-event/content-types/marketplace-sync-event/schema.json';
+import marketplaceSyncEventController from '@/api/marketplace-sync-event/controllers/marketplace-sync-event';
+import marketplaceSyncEventService from '@/api/marketplace-sync-event/services/marketplace-sync-event';
+import marketplaceSyncEventRoutes from '@/api/marketplace-sync-event/routes/marketplace-sync-event';
+import { ChannelType, SyncAction, SyncStatus } from '@/common/enums';
 
 describe('MarketplaceSyncEvent Content Type', () => {
   describe('Schema Definition', () => {

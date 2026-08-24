@@ -1,5 +1,5 @@
 import type { Core } from '@strapi/strapi';
-import indexExport from '../src/index';
+import indexExport from '@/index';
 
 interface MockStrapiInstance {
   db: {

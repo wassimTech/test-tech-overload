@@ -7,7 +7,7 @@ import {
   ChannelListingStatus,
   SyncAction,
   SyncStatus,
-} from '../src/common/enums';
+} from '@/common/enums';
 
 describe('Shared Domain Enums', () => {
   describe('ProductType', () => {

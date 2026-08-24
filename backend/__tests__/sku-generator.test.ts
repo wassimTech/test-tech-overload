@@ -1,6 +1,6 @@
 import type { Core } from '@strapi/strapi';
-import { generateSku } from '../src/api/sellable-unit/services/sku-generator';
-import sellableUnitLifecycles from '../src/api/sellable-unit/content-types/sellable-unit/lifecycles';
+import { generateSku } from '@/api/sellable-unit/services/sku-generator';
+import sellableUnitLifecycles from '@/api/sellable-unit/content-types/sellable-unit/lifecycles';
 
 interface MockStrapiInstance {
   db: {
