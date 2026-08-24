@@ -212,7 +212,14 @@ Every domain entity is strictly scoped to a **`tenantId`** to prevent data cross
 
 This walkthrough guides you through the full lifecycle of a vinyl record, from startup and tenant validation to marketplace synchronization, sale simulation, and persistent audit logging.
 
-Each step provides the exact copy-pasteable `curl` command and the expected JSON response structure.
+> [!IMPORTANT]
+> **Dynamic IDs (`documentId` / `id` / `sku`) :**
+> In Strapi 5, each created record (Product, SellableUnit, etc.) is assigned a unique alphanumeric **`documentId`** (e.g. `k0hvlreku4ef3juf31ubwkt4`) and a numeric **`id`** (e.g. `1`).
+>
+> - In subsequent steps, replace placeholder IDs (`:productId`, `:unitId`, `prd_discovery_001`, `unt_discovery_001`) with the **actual `documentId`** (or `id`) returned in the response of the creation step.
+> - For sellable units, you can also use their auto-generated **`sku`** (e.g. `VIN-000001`).
+
+Each step provides the copy-pasteable `curl` command and the expected JSON response structure.
 
 ---
 
@@ -271,7 +278,7 @@ curl -X GET "http://localhost:1337/api/tenants"
 
 ### Step 3: Create a Product (Catalog Master)
 
-Create a vinyl catalog entry linked to the test tenant:
+Create a vinyl catalog entry linked to the test tenant (`tenant: "vinyl-store"`):
 
 ```bash
 curl -X POST "http://localhost:1337/api/products" \
@@ -291,7 +298,7 @@ curl -X POST "http://localhost:1337/api/products" \
   }'
 ```
 
-**Expected Response (`201 Created`):**
+**Expected Response (`200 OK`):**
 
 ```json
 {
@@ -315,11 +322,13 @@ curl -X POST "http://localhost:1337/api/products" \
 }
 ```
 
+> 💡 **Note:** Copy the `documentId` from the response (e.g. `prd_discovery_001` or `k0hvlreku4ef3juf31ubwkt4`) to use in Steps 5 & 6.
+
 ---
 
 ### Step 4: Search Discogs for Release Metadata
 
-Search for Discogs release metadata (using the deterministic mock connector or the real Discogs API depending on your configuration):
+Search for Discogs release metadata (using the deterministic mock connector by default):
 
 ```bash
 curl -X GET "http://localhost:1337/api/discogs/search?tenantId=vinyl-store&q=Discovery+Daft+Punk"
@@ -339,7 +348,8 @@ curl -X GET "http://localhost:1337/api/discogs/search?tenantId=vinyl-store&q=Dis
       "country": "France",
       "format": "2xLP",
       "masterId": "26647",
-      "thumbUrl": "https://img.discogs.com/mock/discovery.jpg"
+      "barcode": "724384960612",
+      "uri": "https://www.discogs.com/release/123456"
     }
   ]
 }
@@ -349,10 +359,12 @@ curl -X GET "http://localhost:1337/api/discogs/search?tenantId=vinyl-store&q=Dis
 
 ### Step 5: Attach Discogs Release to the Product
 
-Attach the selected Discogs Release ID (`123456`) to the product catalog entry:
+Attach the selected Discogs Release ID (`123456`) to the product catalog entry.
+_(Replace `:productId` with your product's `documentId` from Step 3, e.g. `k0hvlreku4ef3juf31ubwkt4` or `1`)_:
 
 ```bash
-curl -X POST "http://localhost:1337/api/products/prd_discovery_001/attach-discogs-release" \
+# Example: replace :productId with your actual product documentId
+curl -X POST "http://localhost:1337/api/products/:productId/attach-discogs-release" \
   -H "Content-Type: application/json" \
   -d '{
     "tenantId": "vinyl-store",
@@ -386,7 +398,8 @@ curl -X POST "http://localhost:1337/api/products/prd_discovery_001/attach-discog
 
 ### Step 6: Create a SellableUnit (Automatic SKU Generation)
 
-Create a physical inventory copy attached to the product. The backend automatically generates a sequential SKU (`VIN-000001`):
+Create a physical inventory copy attached to the product.
+_(Set `"product"` to your product's `documentId` from Step 3)_. The backend automatically generates a sequential SKU (`VIN-000001`):
 
 ```bash
 curl -X POST "http://localhost:1337/api/sellable-units" \
@@ -394,7 +407,7 @@ curl -X POST "http://localhost:1337/api/sellable-units" \
   -d '{
     "data": {
       "tenant": "vinyl-store",
-      "product": "prd_discovery_001",
+      "product": ":productId",
       "price": 34.99,
       "currency": "EUR",
       "discCondition": "Very Good Plus",
@@ -407,7 +420,7 @@ curl -X POST "http://localhost:1337/api/sellable-units" \
   }'
 ```
 
-**Expected Response (`201 Created`):**
+**Expected Response (`200 OK`):**
 
 ```json
 {
@@ -430,14 +443,17 @@ curl -X POST "http://localhost:1337/api/sellable-units" \
 }
 ```
 
+> 💡 **Note:** Copy the unit's `documentId` (e.g. `unt_discovery_001`) or `sku` (`VIN-000001`) to use in Steps 7, 8, 10, and 11.
+
 ---
 
 ### Step 7: Check Discogs Listing Completeness
 
-Validate that the sellable unit meets all marketplace criteria (positive price, valid disc & sleeve conditions, available status, attached Discogs release):
+Validate that the sellable unit meets all marketplace criteria (positive price, valid disc & sleeve conditions, available status, attached Discogs release).
+_(Replace `:unitId` with your unit's `documentId` from Step 6, or its SKU `VIN-000001`)_:
 
 ```bash
-curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/check-discogs-completeness" \
+curl -X POST "http://localhost:1337/api/sellable-units/:unitId/check-discogs-completeness" \
   -H "Content-Type: application/json" \
   -d '{
     "tenantId": "vinyl-store"
@@ -459,10 +475,11 @@ curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/check-d
 
 ### Step 8: Publish Listing to Discogs
 
-Publish the physical inventory unit to the Discogs Marketplace:
+Publish the physical inventory unit to the Discogs Marketplace.
+_(Replace `:unitId` with your unit's `documentId` or SKU)_:
 
 ```bash
-curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/publish-discogs" \
+curl -X POST "http://localhost:1337/api/sellable-units/:unitId/publish-discogs" \
   -H "Content-Type: application/json" \
   -d '{
     "tenantId": "vinyl-store"
@@ -498,7 +515,7 @@ curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/publish
 
 ### Step 9: Verify the Created ChannelListing
 
-Retrieve the channel listing to confirm publication and synchronization details:
+Retrieve all channel listings to confirm publication and synchronization details:
 
 ```bash
 curl -X GET "http://localhost:1337/api/channel-listings?populate=*"
@@ -536,10 +553,11 @@ curl -X GET "http://localhost:1337/api/channel-listings?populate=*"
 
 ### Step 10: Simulate Marketplace Sale
 
-Simulate the purchase of the vinyl unit on Discogs:
+Simulate the purchase of the vinyl unit on Discogs.
+_(Replace `:unitId` with your unit's `documentId` or SKU)_:
 
 ```bash
-curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/simulate-discogs-sale" \
+curl -X POST "http://localhost:1337/api/sellable-units/:unitId/simulate-discogs-sale" \
   -H "Content-Type: application/json" \
   -d '{
     "tenantId": "vinyl-store"
@@ -575,11 +593,11 @@ curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/simulat
 Verify that the `SellableUnit` has transitioned to `sold` (`quantity: 0`) and that the `ChannelListing` is marked as `removed`:
 
 ```bash
-# Verify the SellableUnit inventory status
-curl -X GET "http://localhost:1337/api/sellable-units/unt_discovery_001"
+# 1. Verify the SellableUnit inventory status (replace :unitId)
+curl -X GET "http://localhost:1337/api/sellable-units/:unitId"
 
-# Verify the ChannelListing marketplace status
-curl -X GET "http://localhost:1337/api/channel-listings/lst_discovery_001"
+# 2. Verify all ChannelListings marketplace statuses
+curl -X GET "http://localhost:1337/api/channel-listings?populate=*"
 ```
 
 **Expected Response for the Unit (`200 OK`):**

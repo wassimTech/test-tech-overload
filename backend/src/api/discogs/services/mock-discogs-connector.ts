@@ -68,7 +68,11 @@ export class MockDiscogsConnector implements IDiscogsConnector {
             const title = release.title.toLowerCase();
             const label = (release.label || '').toLowerCase();
             const id = release.id.toLowerCase();
+            const combined = `${artist} ${title} ${label} ${id}`;
+            const words = trimmed.split(/\s+/);
             return (
+              combined.includes(trimmed) ||
+              words.every((word) => combined.includes(word)) ||
               artist.includes(trimmed) ||
               title.includes(trimmed) ||
               label.includes(trimmed) ||

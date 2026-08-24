@@ -16,12 +16,14 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::tenant.tenant",
+      "inversedBy": "channelListings",
       "required": true
     },
     "sellableUnit": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::sellable-unit.sellable-unit",
+      "inversedBy": "channelListings",
       "required": true
     },
     "channel": {
@@ -50,6 +52,12 @@
     },
     "lastErrorMessage": {
       "type": "text"
+    },
+    "marketplaceSyncEvents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::marketplace-sync-event.marketplace-sync-event",
+      "mappedBy": "channelListing"
     }
   }
 }

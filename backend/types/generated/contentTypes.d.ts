@@ -420,6 +420,10 @@ export interface ApiChannelListingChannelListing extends Struct.CollectionTypeSc
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::channel-listing.channel-listing'> &
       Schema.Attribute.Private;
+    marketplaceSyncEvents: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marketplace-sync-event.marketplace-sync-event'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     publishedPrice: Schema.Attribute.Decimal;
     sellableUnit: Schema.Attribute.Relation<'manyToOne', 'api::sellable-unit.sellable-unit'> &
@@ -504,10 +508,15 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::product.product'> &
       Schema.Attribute.Private;
+    marketplaceSyncEvents: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marketplace-sync-event.marketplace-sync-event'
+    >;
     productType: Schema.Attribute.Enumeration<['vinyl']> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'vinyl'>;
     publishedAt: Schema.Attribute.DateTime;
+    sellableUnits: Schema.Attribute.Relation<'oneToMany', 'api::sellable-unit.sellable-unit'>;
     tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'> &
       Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
@@ -529,6 +538,7 @@ export interface ApiSellableUnitSellableUnit extends Struct.CollectionTypeSchema
     draftAndPublish: false;
   };
   attributes: {
+    channelListings: Schema.Attribute.Relation<'oneToMany', 'api::channel-listing.channel-listing'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     currency: Schema.Attribute.String &
@@ -542,6 +552,10 @@ export interface ApiSellableUnitSellableUnit extends Struct.CollectionTypeSchema
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::sellable-unit.sellable-unit'> &
       Schema.Attribute.Private;
     location: Schema.Attribute.String;
+    marketplaceSyncEvents: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marketplace-sync-event.marketplace-sync-event'
+    >;
     price: Schema.Attribute.Decimal & Schema.Attribute.Required;
     product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'> &
       Schema.Attribute.Required;
@@ -577,14 +591,21 @@ export interface ApiTenantTenant extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    channelListings: Schema.Attribute.Relation<'oneToMany', 'api::channel-listing.channel-listing'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
     isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::tenant.tenant'> &
       Schema.Attribute.Private;
+    marketplaceSyncEvents: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marketplace-sync-event.marketplace-sync-event'
+    >;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    products: Schema.Attribute.Relation<'oneToMany', 'api::product.product'>;
     publishedAt: Schema.Attribute.DateTime;
+    sellableUnits: Schema.Attribute.Relation<'oneToMany', 'api::sellable-unit.sellable-unit'>;
     slug: Schema.Attribute.String & Schema.Attribute.Required & Schema.Attribute.Unique;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;

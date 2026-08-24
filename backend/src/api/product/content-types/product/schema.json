@@ -16,6 +16,7 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::tenant.tenant",
+      "inversedBy": "products",
       "required": true
     },
     "productType": {
@@ -59,6 +60,18 @@
     },
     "discogsMasterId": {
       "type": "string"
+    },
+    "sellableUnits": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::sellable-unit.sellable-unit",
+      "mappedBy": "product"
+    },
+    "marketplaceSyncEvents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::marketplace-sync-event.marketplace-sync-event",
+      "mappedBy": "product"
     }
   }
 }

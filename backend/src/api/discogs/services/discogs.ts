@@ -79,6 +79,67 @@ interface ChannelListingDocument {
 }
 
 /**
+ * Finds a product document by documentId or numeric id.
+ */
+async function findProduct(
+  strapi: Core.Strapi,
+  productId: string
+): Promise<ProductDocument | null> {
+  const docService = strapi.documents('api::product.product');
+  let product: ProductDocument | null = null;
+  if (typeof docService?.findOne === 'function') {
+    product = (await docService.findOne({
+      documentId: productId,
+      populate: ['tenant'],
+    })) as ProductDocument | null;
+  }
+
+  if (!product && typeof docService?.findFirst === 'function') {
+    const numId = Number(productId);
+    if (!isNaN(numId)) {
+      product = (await docService.findFirst({
+        filters: { id: numId },
+        populate: ['tenant'],
+      })) as ProductDocument | null;
+    }
+  }
+  return product;
+}
+
+/**
+ * Finds a sellable unit document by documentId, numeric id, or sku.
+ */
+async function findSellableUnit(
+  strapi: Core.Strapi,
+  unitId: string
+): Promise<SellableUnitDocument | null> {
+  const docService = strapi.documents('api::sellable-unit.sellable-unit');
+  let unit: SellableUnitDocument | null = null;
+  if (typeof docService?.findOne === 'function') {
+    unit = (await docService.findOne({
+      documentId: unitId,
+      populate: ['product', 'tenant'],
+    })) as SellableUnitDocument | null;
+  }
+
+  if (!unit && typeof docService?.findFirst === 'function') {
+    const numId = Number(unitId);
+    if (!isNaN(numId)) {
+      unit = (await docService.findFirst({
+        filters: { id: numId },
+        populate: ['product', 'tenant'],
+      })) as SellableUnitDocument | null;
+    } else {
+      unit = (await docService.findFirst({
+        filters: { sku: unitId },
+        populate: ['product', 'tenant'],
+      })) as SellableUnitDocument | null;
+    }
+  }
+  return unit;
+}
+
+/**
  * Checks if an entity's tenant relation matches the requested tenantId.
  */
 function isMatchingTenant(tenantRelation: TenantRelation | undefined, tenantId: string): boolean {
@@ -168,10 +229,7 @@ export class DiscogsService {
     }
 
     // 1. Fetch and verify Product belongs to the specified tenant
-    const product = (await this.strapi.documents('api::product.product').findOne({
-      documentId: productId,
-      populate: ['tenant'],
-    })) as ProductDocument | null;
+    const product = await findProduct(this.strapi, productId);
 
     if (!product || !isMatchingTenant(product.tenant, tenantId)) {
       await syncEventLogger.log({
@@ -258,10 +316,7 @@ export class DiscogsService {
       throw new Error('sellableUnitId is required');
     }
 
-    const unit = (await this.strapi.documents('api::sellable-unit.sellable-unit').findOne({
-      documentId: sellableUnitId,
-      populate: ['product', 'tenant'],
-    })) as SellableUnitDocument | null;
+    const unit = await findSellableUnit(this.strapi, sellableUnitId);
 
     if (!unit || !isMatchingTenant(unit.tenant, tenantId)) {
       throw new Error(`SellableUnit ${sellableUnitId} not found for the specified tenant`);
@@ -325,10 +380,7 @@ export class DiscogsService {
       throw new Error('sellableUnitId is required');
     }
 
-    const unit = (await this.strapi.documents('api::sellable-unit.sellable-unit').findOne({
-      documentId: sellableUnitId,
-      populate: ['product', 'tenant'],
-    })) as SellableUnitDocument | null;
+    const unit = await findSellableUnit(this.strapi, sellableUnitId);
 
     if (!unit || !isMatchingTenant(unit.tenant, tenantId)) {
       throw new Error(`SellableUnit ${sellableUnitId} not found for the specified tenant`);
@@ -461,10 +513,7 @@ export class DiscogsService {
       throw new Error('sellableUnitId is required');
     }
 
-    const unit = (await this.strapi.documents('api::sellable-unit.sellable-unit').findOne({
-      documentId: sellableUnitId,
-      populate: ['product', 'tenant'],
-    })) as SellableUnitDocument | null;
+    const unit = await findSellableUnit(this.strapi, sellableUnitId);
 
     if (!unit || !isMatchingTenant(unit.tenant, tenantId)) {
       throw new Error(`SellableUnit ${sellableUnitId} not found for the specified tenant`);

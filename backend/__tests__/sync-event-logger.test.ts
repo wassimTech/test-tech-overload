@@ -14,8 +14,25 @@ describe('SyncEventLogger Service (T-12)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockCreate = jest.fn().mockResolvedValue({ id: 1, documentId: 'event-doc-01' });
-    mockDocuments = jest.fn().mockReturnValue({
-      create: mockCreate,
+    mockDocuments = jest.fn((uid?: string) => {
+      if (uid === 'api::tenant.tenant') {
+        return {
+          findFirst: jest.fn(
+            ({
+              filters,
+            }: {
+              filters?: { $or?: Array<{ slug?: string; documentId?: string }> };
+            } = {}) => {
+              const requested =
+                filters?.$or?.[0]?.slug || filters?.$or?.[0]?.documentId || 'tenant-123';
+              return Promise.resolve({ documentId: requested, slug: requested });
+            }
+          ),
+        };
+      }
+      return {
+        create: mockCreate,
+      };
     });
     mockStrapi = {
       documents: mockDocuments,
@@ -37,7 +54,6 @@ describe('SyncEventLogger Service (T-12)', () => {
 
       await logSyncEvent(params);
 
-      expect(mockDocuments).toHaveBeenCalledTimes(1);
       expect(mockDocuments).toHaveBeenCalledWith(
         'api::marketplace-sync-event.marketplace-sync-event'
       );

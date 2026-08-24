@@ -15,6 +15,7 @@
     "lint": "npm run lint --workspaces",
     "check": "npm run check --workspaces",
     "test": "npm run test --workspaces --if-present",
+    "test:flow": "bash test-flow.sh",
     "format": "prettier --write \"backend/src/**/*.{ts,tsx,json,md}\" \"backend/config/**/*.{ts,json}\" \"frontend/src/**/*.{ts,tsx,json,md,css}\"",
     "format:check": "prettier --check \"backend/src/**/*.{ts,tsx,json,md}\" \"backend/config/**/*.{ts,json}\" \"frontend/src/**/*.{ts,tsx,json,md,css}\"",
     "docker:up": "docker compose --profile dev up -d",

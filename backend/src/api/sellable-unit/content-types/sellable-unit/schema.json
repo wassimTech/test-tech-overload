@@ -16,12 +16,14 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::tenant.tenant",
+      "inversedBy": "sellableUnits",
       "required": true
     },
     "product": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::product.product",
+      "inversedBy": "sellableUnits",
       "required": true
     },
     "sku": {
@@ -82,6 +84,18 @@
     },
     "location": {
       "type": "string"
+    },
+    "channelListings": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::channel-listing.channel-listing",
+      "mappedBy": "sellableUnit"
+    },
+    "marketplaceSyncEvents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::marketplace-sync-event.marketplace-sync-event",
+      "mappedBy": "sellableUnit"
     }
   }
 }

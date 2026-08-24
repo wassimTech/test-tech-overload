@@ -24,6 +24,30 @@
     "isActive": {
       "type": "boolean",
       "default": true
+    },
+    "products": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product.product",
+      "mappedBy": "tenant"
+    },
+    "sellableUnits": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::sellable-unit.sellable-unit",
+      "mappedBy": "tenant"
+    },
+    "channelListings": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::channel-listing.channel-listing",
+      "mappedBy": "tenant"
+    },
+    "marketplaceSyncEvents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::marketplace-sync-event.marketplace-sync-event",
+      "mappedBy": "tenant"
     }
   }
 }

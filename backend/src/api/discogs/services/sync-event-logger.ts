@@ -37,9 +37,25 @@ export async function logSyncEvent(params: LogSyncEventParams): Promise<void> {
     payload,
   } = params;
 
+  let resolvedTenantDocId = tenantId;
+  if (tenantId && strapi?.documents) {
+    try {
+      const tenant = await strapi.documents('api::tenant.tenant').findFirst({
+        filters: {
+          $or: [{ slug: tenantId }, { documentId: tenantId }],
+        },
+      });
+      if (tenant) {
+        resolvedTenantDocId = tenant.documentId;
+      }
+    } catch {
+      // In test/mock environments where findFirst might not be available
+    }
+  }
+
   await strapi.documents('api::marketplace-sync-event.marketplace-sync-event').create({
     data: {
-      tenant: tenantId,
+      tenant: resolvedTenantDocId,
       channel,
       action,
       status,
