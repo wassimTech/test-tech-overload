@@ -110,19 +110,23 @@ All entities MUST include a `tenantId` (or relation to `Tenant`) for strict mult
 Bias toward caution, precision, data safety, and simplicity over speed:
 
 ### 1. Think Before Coding
+
 - **Surface assumptions & tradeoffs**: State your assumptions explicitly. If uncertain or if multiple interpretations exist, present them clearly rather than picking silently.
 - **Push back on overcomplication**: If a simpler approach exists, suggest it proactively. Ask clarifying questions before implementation rather than fixing mistakes after.
 
 ### 2. Simplicity First (Anti-Overengineering)
+
 - **Minimum necessary code**: Write the smallest amount of code that solves the problem cleanly.
 - **No speculative code**: No unused abstractions, premature configurability, or handling for impossible scenarios.
 - **Refactor when overcomplicated**: If a solution exceeds 200 lines when 50 lines would suffice, pause and simplify.
 
 ### 3. Surgical Changes & Clean-up
+
 - **Touch only what is necessary**: Modify only the code directly related to the user request. Do not "improve" adjacent formatting or refactor unbroken code.
 - **Clean up your own mess**: Remove any unused imports, variables, or functions created by your changes. Leave pre-existing dead code untouched unless asked.
 
 ### 4. Goal-Driven Execution & Verification
+
 - **Define success criteria**: Break tasks into clear steps with explicit verification goals.
 - **Loop until verified**: Run linting, TypeScript type checks (`npm run check` / `tsc`), and integration tests before completing any task.
 
@@ -161,7 +165,7 @@ Every service, controller, and helper built or modified MUST adhere strictly to 
 
 The Discogs service layer MUST implement the following interface:
 
-- `searchReleases(query: string, tenantId: string)`: Searches releases (returns plausible mock data by default like Daft Punk - *Discovery*).
+- `searchReleases(query: string, tenantId: string)`: Searches releases (returns plausible mock data by default like Daft Punk - _Discovery_).
 - `getRelease(releaseId: string)`: Retrieves release metadata.
 - `validateListingPayload(unitId: string)`: Verifies all mandatory fields are present before publication.
 - `publishListing(unitId: string)`: Creates or updates a listing (returns mock `externalListingId` like `discogs-listing-0001` and `externalUrl`).
@@ -189,6 +193,11 @@ The Discogs service layer MUST implement the following interface:
 1. **Strict Types**: No `any` types. Define explicit interfaces for all payloads, DTOs, parameters, and Strapi content types.
 2. **Auto SKU Generation**: SKUs MUST be generated automatically on backend creation (e.g. `VIN-000001`) via lifecycle hooks or service wrappers. Never trust manually input SKUs from HTTP clients.
 3. **Error Handling & Audit Logging**: Any failure during completeness validation, publication, or sale simulation MUST produce a structured log entry in `MarketplaceSyncEvent`.
+4. **Module Imports & Path Aliases (Ban `../` and `../../`)**:
+   - **Never use parent relative paths** (`../`, `../../`, `../../../`, etc.) to traverse directories across files.
+   - **Use Path Aliases (`@/...`)**: Use `@/...` aliases configured in `tsconfig.json` (e.g. `@/api/discogs/types`, `@/common/enums`) for all cross-module references, DTOs, interfaces, and test files.
+   - **Sibling Imports (`./`)**: For files located in the exact same directory, use clean sibling imports (`./my-service`).
+   - **Type-Only Imports**: Use `import type { ... }` when importing interfaces, types, or DTOs that are only used as type annotations, ensuring zero runtime resolution overhead and clean TypeScript compilation.
 
 ---
 
