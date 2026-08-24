@@ -18,9 +18,9 @@ getConnector():
 
 ## Critères d'acceptation
 
-- [ ] Sans `DISCOGS_API_TOKEN` → retourne `MockDiscogsConnector`
-- [ ] Avec `DISCOGS_API_TOKEN` → retourne une instance qui throw (placeholder)
-- [ ] Retourne un objet conforme à `IDiscogsConnector`
+- [x] Sans `DISCOGS_API_TOKEN` → retourne `MockDiscogsConnector`
+- [x] Avec `DISCOGS_API_TOKEN` → retourne une instance qui throw (placeholder)
+- [x] Retourne un objet conforme à `IDiscogsConnector`
 
 ## Dépendances
 

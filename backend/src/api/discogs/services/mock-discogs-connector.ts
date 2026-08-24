@@ -1,10 +1,10 @@
-import {
+import type {
   IDiscogsConnector,
   DiscogsSearchResult,
   DiscogsRelease,
   PublishListingParams,
   PublishListingResult,
-} from '../types';
+} from '@/api/discogs/types';
 
 /**
  * Default mock catalog containing plausible releases for local simulation.
