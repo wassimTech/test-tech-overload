@@ -21,10 +21,10 @@ Créer le content type Tenant (collection) avec les fichiers Strapi 5 standard.
 
 ## Critères d'acceptation
 
-- [ ] Strapi démarre sans erreur
-- [ ] Tenant visible dans l'admin Strapi
-- [ ] CRUD fonctionne via `GET/POST /api/tenants`
-- [ ] `slug` a une contrainte d'unicité
+- [x] Strapi démarre sans erreur
+- [x] Tenant visible dans l'admin Strapi
+- [x] CRUD fonctionne via `GET/POST /api/tenants`
+- [x] `slug` a une contrainte d'unicité
 
 ## Dépendances
 
