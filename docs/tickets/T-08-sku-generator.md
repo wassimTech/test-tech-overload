@@ -27,10 +27,10 @@ Créer le service de génération SKU et le lifecycle hook `beforeCreate` sur Se
 
 ## Critères d'acceptation
 
-- [ ] Créer une SellableUnit via l'admin → SKU auto-généré `VIN-000001`
-- [ ] Créer une deuxième → `VIN-000002`
-- [ ] Passer un SKU manuel dans la requête → ignoré, SKU auto-généré
-- [ ] `tsc --noEmit` passe
+- [x] Créer une SellableUnit via l'admin → SKU auto-généré `VIN-000001`
+- [x] Créer une deuxième → `VIN-000002`
+- [x] Passer un SKU manuel dans la requête → ignoré, SKU auto-généré
+- [x] `tsc --noEmit` passe
 
 ## Dépendances
 
