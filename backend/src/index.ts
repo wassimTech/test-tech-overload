@@ -1,4 +1,4 @@
-// import type { Core } from '@strapi/strapi';
+import type { Core } from '@strapi/strapi';
 
 export default {
   /**
@@ -16,5 +16,23 @@ export default {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/* { strapi }: { strapi: Core.Strapi } */) {},
+  async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+    // 1. Create PostgreSQL sequence for SKU auto-generation if not exists
+    await strapi.db.connection.raw('CREATE SEQUENCE IF NOT EXISTS sku_seq START 1;');
+
+    // 2. Check and seed default test tenant
+    const existingTenant = await strapi.documents('api::tenant.tenant').findFirst({
+      filters: { slug: 'vinyl-store' },
+    });
+
+    if (!existingTenant) {
+      await strapi.documents('api::tenant.tenant').create({
+        data: {
+          name: 'Vinyl Store',
+          slug: 'vinyl-store',
+          isActive: true,
+        },
+      });
+    }
+  },
 };

@@ -18,10 +18,10 @@ Modifier `src/index.ts` pour créer idempotentement la séquence PostgreSQL `sku
 
 ## Critères d'acceptation
 
-- [ ] Au premier démarrage : séquence créée, tenant "Vinyl Store" créé
-- [ ] Au deuxième démarrage : aucune erreur, aucun doublon
-- [ ] `SELECT nextval('sku_seq')` fonctionne dans pgAdmin/psql
-- [ ] Le tenant est consultable via `GET /api/tenants`
+- [x] Au premier démarrage : séquence créée, tenant "Vinyl Store" créé
+- [x] Au deuxième démarrage : aucune erreur, aucun doublon
+- [x] `SELECT nextval('sku_seq')` fonctionne dans pgAdmin/psql
+- [x] Le tenant est consultable via `GET /api/tenants`
 
 ## Dépendances
 
