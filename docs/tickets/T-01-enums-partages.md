@@ -20,9 +20,9 @@ Créer le fichier d'enums TypeScript miroir pour toutes les valeurs utilisées d
 
 ## Critères d'acceptation
 
-- [ ] Le fichier compile sans erreur (`tsc --noEmit`)
-- [ ] Aucun `any` type
-- [ ] Chaque enum correspond exactement aux valeurs qui seront dans les `schema.json`
+- [x] Le fichier compile sans erreur (`tsc --noEmit`)
+- [x] Aucun `any` type
+- [x] Chaque enum correspond exactement aux valeurs qui seront dans les `schema.json`
 
 ## Dépendances
 
