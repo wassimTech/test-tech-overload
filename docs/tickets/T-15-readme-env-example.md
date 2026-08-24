@@ -32,9 +32,9 @@ Chaque étape avec la commande curl exacte et la réponse attendue.
 
 ## Critères d'acceptation
 
-- [ ] Un développeur qui suit le README de A à Z peut reproduire tout le parcours
-- [ ] Chaque commande curl est copiable-collable
-- [ ] `.env.example` contient `DISCOGS_API_TOKEN` commenté avec explication
+- [x] Un développeur qui suit le README de A à Z peut reproduire tout le parcours
+- [x] Chaque commande curl est copiable-collable
+- [x] `.env.example` contient `DISCOGS_API_TOKEN` commenté avec explication
 
 ## Dépendances
 

@@ -1,4 +1,4 @@
-import { generateSku } from '../../services/sku-generator';
+import { generateSku } from '@/api/sellable-unit/services/sku-generator';
 
 export interface LifecycleEvent<T = Record<string, unknown>> {
   action?: string;

@@ -210,97 +210,475 @@ Every domain entity is strictly scoped to a **`tenantId`** to prevent data cross
 
 ## 8. End-to-End Test Walkthrough & API Endpoints
 
-Execute the complete vinyl lifecycle from catalog creation to marketplace sale:
+This walkthrough guides you through the full lifecycle of a vinyl record, from startup and tenant validation to marketplace synchronization, sale simulation, and persistent audit logging.
 
-### Step 1: Create a Tenant
+Each step provides the exact copy-pasteable `curl` command and the expected JSON response structure.
+
+---
+
+### Step 1: Start Docker & Strapi
+
+Launch the PostgreSQL and pgAdmin containers, then start the Strapi development server:
 
 ```bash
-curl -X POST http://localhost:1337/api/tenants \
+# 1. Start PostgreSQL 16 & pgAdmin 4 containers in the background
+npm run docker:up
+
+# 2. Start the Strapi backend development server
+npm run dev:backend
+```
+
+> **Expected Result:** Strapi starts on `http://localhost:1337`. During bootstrap, Strapi automatically creates the PostgreSQL sequence `sku_seq` for automated SKU generation and seeds the default test tenant (`slug: "vinyl-store"`).
+
+---
+
+### Step 2: Verify the Auto-Created Tenant
+
+Query the API to verify that the default tenant was initialized:
+
+```bash
+curl -X GET "http://localhost:1337/api/tenants"
+```
+
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "documentId": "tnt_default_01",
+      "name": "Vinyl Store",
+      "slug": "vinyl-store",
+      "isActive": true,
+      "createdAt": "2026-08-24T20:00:00.000Z",
+      "updatedAt": "2026-08-24T20:00:00.000Z",
+      "publishedAt": "2026-08-24T20:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "pageSize": 25,
+      "pageCount": 1,
+      "total": 1
+    }
+  }
+}
+```
+
+---
+
+### Step 3: Create a Product (Catalog Master)
+
+Create a vinyl catalog entry linked to the test tenant:
+
+```bash
+curl -X POST "http://localhost:1337/api/products" \
   -H "Content-Type: application/json" \
   -d '{
     "data": {
-      "name": "Disquaire Parisien",
-      "slug": "disquaire-paris",
-      "isActive": true
+      "tenant": "vinyl-store",
+      "productType": "vinyl",
+      "title": "Discovery",
+      "artist": "Daft Punk",
+      "label": "Virgin",
+      "year": 2001,
+      "country": "France",
+      "format": "2xLP",
+      "barcode": "724384960612"
     }
   }'
 ```
 
-### Step 2: Search Discogs for Release Metadata
+**Expected Response (`201 Created`):**
 
-```bash
-curl -X GET "http://localhost:1337/api/discogs/search?tenantId=1&q=Discovery+Daft+Punk"
+```json
+{
+  "data": {
+    "id": 1,
+    "documentId": "prd_discovery_001",
+    "title": "Discovery",
+    "artist": "Daft Punk",
+    "productType": "vinyl",
+    "label": "Virgin",
+    "year": 2001,
+    "country": "France",
+    "format": "2xLP",
+    "barcode": "724384960612",
+    "discogsReleaseId": null,
+    "discogsMasterId": null,
+    "createdAt": "2026-08-24T20:05:00.000Z",
+    "updatedAt": "2026-08-24T20:05:00.000Z",
+    "publishedAt": "2026-08-24T20:05:00.000Z"
+  }
+}
 ```
 
-_Returns deterministic mock data: Release ID `123456`, Daft Punk - Discovery (2001, Virgin, France)._
+---
 
-### Step 3: Create Catalog Product Attached to Discogs
+### Step 4: Search Discogs for Release Metadata
+
+Search for Discogs release metadata (using the deterministic mock connector or the real Discogs API depending on your configuration):
 
 ```bash
-curl -X POST http://localhost:1337/api/products \
-  -H "Content-Type: application/json" \
-  -d '{
-    "data": {
-      "tenant": 1,
-      "productType": "vinyl",
+curl -X GET "http://localhost:1337/api/discogs/search?tenantId=vinyl-store&q=Discovery+Daft+Punk"
+```
+
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": [
+    {
+      "id": "123456",
       "title": "Discovery",
       "artist": "Daft Punk",
       "year": 2001,
       "label": "Virgin",
       "country": "France",
       "format": "2xLP",
-      "discogsReleaseId": "123456"
+      "masterId": "26647",
+      "thumbUrl": "https://img.discogs.com/mock/discovery.jpg"
     }
+  ]
+}
+```
+
+---
+
+### Step 5: Attach Discogs Release to the Product
+
+Attach the selected Discogs Release ID (`123456`) to the product catalog entry:
+
+```bash
+curl -X POST "http://localhost:1337/api/products/prd_discovery_001/attach-discogs-release" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tenantId": "vinyl-store",
+    "releaseId": "123456"
   }'
 ```
 
-### Step 4: Create a Sellable Unit (Automatic SKU Generation)
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": {
+    "id": 1,
+    "documentId": "prd_discovery_001",
+    "title": "Discovery",
+    "artist": "Daft Punk",
+    "productType": "vinyl",
+    "label": "Virgin",
+    "year": 2001,
+    "country": "France",
+    "format": "2xLP",
+    "barcode": "724384960612",
+    "discogsReleaseId": "123456",
+    "discogsMasterId": "26647",
+    "updatedAt": "2026-08-24T20:06:00.000Z"
+  }
+}
+```
+
+---
+
+### Step 6: Create a SellableUnit (Automatic SKU Generation)
+
+Create a physical inventory copy attached to the product. The backend automatically generates a sequential SKU (`VIN-000001`):
 
 ```bash
-curl -X POST http://localhost:1337/api/sellable-units \
+curl -X POST "http://localhost:1337/api/sellable-units" \
   -H "Content-Type: application/json" \
   -d '{
     "data": {
-      "tenant": 1,
-      "product": 1,
+      "tenant": "vinyl-store",
+      "product": "prd_discovery_001",
       "price": 34.99,
       "currency": "EUR",
       "discCondition": "Very Good Plus",
       "sleeveCondition": "Near Mint",
-      "sellerNotes": "Original pressing, very clean copy",
-      "quantity": 1
+      "sellerNotes": "Original pressing, very clean copy with pristine inserts",
+      "status": "available",
+      "quantity": 1,
+      "location": "BIN-A-42"
     }
   }'
 ```
 
-_Backend automatically generates `sku: "VIN-000001"` and sets initial `status: "available"`._
+**Expected Response (`201 Created`):**
 
-### Step 5: Validate Completeness for Discogs Publication
-
-```bash
-curl -X POST http://localhost:1337/api/sellable-units/1/check-discogs-completeness \
-  -H "Content-Type: application/json"
+```json
+{
+  "data": {
+    "id": 1,
+    "documentId": "unt_discovery_001",
+    "sku": "VIN-000001",
+    "price": 34.99,
+    "currency": "EUR",
+    "discCondition": "Very Good Plus",
+    "sleeveCondition": "Near Mint",
+    "sellerNotes": "Original pressing, very clean copy with pristine inserts",
+    "status": "available",
+    "quantity": 1,
+    "location": "BIN-A-42",
+    "createdAt": "2026-08-24T20:07:00.000Z",
+    "updatedAt": "2026-08-24T20:07:00.000Z",
+    "publishedAt": "2026-08-24T20:07:00.000Z"
+  }
+}
 ```
 
-_Verifies tenant isolation, disc condition, price validity, and Discogs Release ID._
+---
 
-### Step 6: Publish Listing to Discogs
+### Step 7: Check Discogs Listing Completeness
 
-```bash
-curl -X POST http://localhost:1337/api/sellable-units/1/publish-discogs \
-  -H "Content-Type: application/json"
-```
-
-_Creates a `ChannelListing` with `externalListingId: "discogs-listing-0001"` and logs a `success` event in `MarketplaceSyncEvent`._
-
-### Step 7: Simulate Marketplace Sale
+Validate that the sellable unit meets all marketplace criteria (positive price, valid disc & sleeve conditions, available status, attached Discogs release):
 
 ```bash
-curl -X POST http://localhost:1337/api/sellable-units/1/simulate-discogs-sale \
-  -H "Content-Type: application/json"
+curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/check-discogs-completeness" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tenantId": "vinyl-store"
+  }'
 ```
 
-_Transitions the inventory unit status to `sold`, decrements stock, and creates an audit entry in `MarketplaceSyncEvent`._
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": {
+    "complete": true,
+    "missingFields": []
+  }
+}
+```
+
+---
+
+### Step 8: Publish Listing to Discogs
+
+Publish the physical inventory unit to the Discogs Marketplace:
+
+```bash
+curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/publish-discogs" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tenantId": "vinyl-store"
+  }'
+```
+
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": {
+    "channelListing": {
+      "id": 1,
+      "documentId": "lst_discovery_001",
+      "channel": "discogs",
+      "status": "published",
+      "externalListingId": "discogs-listing-0001",
+      "externalUrl": "https://www.discogs.com/sell/item/discogs-listing-0001",
+      "publishedPrice": 34.99,
+      "lastSyncedAt": "2026-08-24T20:08:00.000Z"
+    },
+    "discogsResult": {
+      "externalListingId": "discogs-listing-0001",
+      "externalUrl": "https://www.discogs.com/sell/item/discogs-listing-0001",
+      "publishedPrice": 34.99,
+      "status": "published"
+    }
+  }
+}
+```
+
+---
+
+### Step 9: Verify the Created ChannelListing
+
+Retrieve the channel listing to confirm publication and synchronization details:
+
+```bash
+curl -X GET "http://localhost:1337/api/channel-listings?populate=*"
+```
+
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "documentId": "lst_discovery_001",
+      "channel": "discogs",
+      "status": "published",
+      "externalListingId": "discogs-listing-0001",
+      "externalUrl": "https://www.discogs.com/sell/item/discogs-listing-0001",
+      "publishedPrice": 34.99,
+      "lastSyncedAt": "2026-08-24T20:08:00.000Z",
+      "lastErrorMessage": null
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "pageSize": 25,
+      "pageCount": 1,
+      "total": 1
+    }
+  }
+}
+```
+
+---
+
+### Step 10: Simulate Marketplace Sale
+
+Simulate the purchase of the vinyl unit on Discogs:
+
+```bash
+curl -X POST "http://localhost:1337/api/sellable-units/unt_discovery_001/simulate-discogs-sale" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tenantId": "vinyl-store"
+  }'
+```
+
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": {
+    "sellableUnit": {
+      "id": 1,
+      "documentId": "unt_discovery_001",
+      "status": "sold",
+      "quantity": 0,
+      "updatedAt": "2026-08-24T20:09:00.000Z"
+    },
+    "channelListing": {
+      "id": 1,
+      "documentId": "lst_discovery_001",
+      "status": "removed",
+      "lastSyncedAt": "2026-08-24T20:09:00.000Z"
+    }
+  }
+}
+```
+
+---
+
+### Step 11: Verify Final Statuses
+
+Verify that the `SellableUnit` has transitioned to `sold` (`quantity: 0`) and that the `ChannelListing` is marked as `removed`:
+
+```bash
+# Verify the SellableUnit inventory status
+curl -X GET "http://localhost:1337/api/sellable-units/unt_discovery_001"
+
+# Verify the ChannelListing marketplace status
+curl -X GET "http://localhost:1337/api/channel-listings/lst_discovery_001"
+```
+
+**Expected Response for the Unit (`200 OK`):**
+
+```json
+{
+  "data": {
+    "id": 1,
+    "documentId": "unt_discovery_001",
+    "sku": "VIN-000001",
+    "price": 34.99,
+    "currency": "EUR",
+    "status": "sold",
+    "quantity": 0
+  }
+}
+```
+
+---
+
+### Step 12: Inspect MarketplaceSyncEvent Audit Logs
+
+Retrieve the complete persistent audit trail of synchronization events:
+
+```bash
+curl -X GET "http://localhost:1337/api/marketplace-sync-events?sort=createdAt:desc"
+```
+
+**Expected Response (`200 OK`):**
+
+```json
+{
+  "data": [
+    {
+      "id": 4,
+      "documentId": "evt_004",
+      "channel": "discogs",
+      "action": "mark_out_of_stock",
+      "status": "success",
+      "message": "Simulated Discogs sale for SellableUnit unt_discovery_001: unit marked sold, listing marked removed",
+      "payload": {
+        "previousUnitStatus": "available",
+        "newUnitStatus": "sold",
+        "previousListingStatus": "published",
+        "newListingStatus": "removed"
+      },
+      "createdAt": "2026-08-24T20:09:00.000Z"
+    },
+    {
+      "id": 3,
+      "documentId": "evt_003",
+      "channel": "discogs",
+      "action": "publish_listing",
+      "status": "success",
+      "message": "Successfully published SellableUnit unt_discovery_001 to Discogs as listing discogs-listing-0001",
+      "payload": {
+        "externalListingId": "discogs-listing-0001",
+        "externalUrl": "https://www.discogs.com/sell/item/discogs-listing-0001",
+        "publishedPrice": 34.99
+      },
+      "createdAt": "2026-08-24T20:08:00.000Z"
+    },
+    {
+      "id": 2,
+      "documentId": "evt_002",
+      "channel": "discogs",
+      "action": "check_completeness",
+      "status": "success",
+      "message": "Completeness check passed for SellableUnit unt_discovery_001",
+      "payload": {
+        "complete": true,
+        "missingFields": []
+      },
+      "createdAt": "2026-08-24T20:07:30.000Z"
+    },
+    {
+      "id": 1,
+      "documentId": "evt_001",
+      "channel": "discogs",
+      "action": "search_release",
+      "status": "success",
+      "message": "Found 1 Discogs release(s) for query \"Discovery Daft Punk\"",
+      "payload": {
+        "query": "Discovery Daft Punk",
+        "resultsCount": 1
+      },
+      "createdAt": "2026-08-24T20:05:30.000Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "pageSize": 25,
+      "pageCount": 1,
+      "total": 4
+    }
+  }
+}
+```
 
 ---
 
