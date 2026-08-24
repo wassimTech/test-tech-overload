@@ -9,6 +9,14 @@ describe('MockDiscogsConnector (T-10)', () => {
     connector = new MockDiscogsConnector();
   });
 
+  describe('Interface & Contract Compliance', () => {
+    it('should implement IDiscogsConnector interface contract with all required methods', () => {
+      expect(typeof connector.searchReleases).toBe('function');
+      expect(typeof connector.getRelease).toBe('function');
+      expect(typeof connector.publishListing).toBe('function');
+    });
+  });
+
   describe('searchReleases', () => {
     it('should find Discovery when querying "Daft Punk"', async () => {
       const results = await connector.searchReleases('Daft Punk');

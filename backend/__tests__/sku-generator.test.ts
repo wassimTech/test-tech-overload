@@ -58,6 +58,26 @@ describe('SKU Generator Service & Lifecycles (T-08)', () => {
       expect(sku).toBe('VIN-001234');
     });
 
+    it('should format numbers with padding on different values (e.g. 42 -> VIN-000042)', async () => {
+      mockRaw.mockResolvedValueOnce({
+        rows: [{ nextval: 42 }],
+      });
+
+      const sku = await generateSku(mockStrapi as unknown as Core.Strapi);
+
+      expect(sku).toBe('VIN-000042');
+    });
+
+    it('should format 999999 -> VIN-999999 (boundary 6-digit value)', async () => {
+      mockRaw.mockResolvedValueOnce({
+        rows: [{ nextval: '999999' }],
+      });
+
+      const sku = await generateSku(mockStrapi as unknown as Core.Strapi);
+
+      expect(sku).toBe('VIN-999999');
+    });
+
     it('should format numbers with 6 or more digits without losing precision (e.g. 1000000 -> VIN-1000000)', async () => {
       mockRaw.mockResolvedValueOnce({
         rows: [{ nextval: 1000000 }],

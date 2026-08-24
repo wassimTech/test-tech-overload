@@ -16,29 +16,29 @@ Configurer Jest et écrire les tests unitaires critiques.
 
 ### sku-generator.test.ts
 
-- [ ] Formate `1` → `VIN-000001`
-- [ ] Formate `999999` → `VIN-999999`
-- [ ] Padding correct sur différentes valeurs
+- [x] Formate `1` → `VIN-000001`
+- [x] Formate `999999` → `VIN-999999`
+- [x] Padding correct sur différentes valeurs
 
 ### check-completeness.test.ts
 
-- [ ] Unit complète → `{ complete: true, missingFields: [] }`
-- [ ] Prix manquant → `{ complete: false, missingFields: ['price'] }`
-- [ ] `discogsReleaseId` manquant sur Product → incomplet
-- [ ] Plusieurs champs manquants → tous listés
+- [x] Unit complète → `{ complete: true, missingFields: [] }`
+- [x] Prix manquant → `{ complete: false, missingFields: ['price'] }`
+- [x] `discogsReleaseId` manquant sur Product → incomplet
+- [x] Plusieurs champs manquants → tous listés
 
 ### mock-discogs-connector.test.ts
 
-- [ ] `searchReleases` retourne un tableau non vide
-- [ ] `getRelease` retourne un objet avec les champs attendus
-- [ ] `publishListing` retourne `externalListingId` + `externalUrl`
-- [ ] Implémente `IDiscogsConnector` (type check)
+- [x] `searchReleases` retourne un tableau non vide
+- [x] `getRelease` retourne un objet avec les champs attendus
+- [x] `publishListing` retourne `externalListingId` + `externalUrl`
+- [x] Implémente `IDiscogsConnector` (type check)
 
 ## Critères d'acceptation
 
-- [ ] `npm test` passe (exit 0)
-- [ ] Aucun test skipped
-- [ ] Couverture des 3 services critiques
+- [x] `npm test` passe (exit 0)
+- [x] Aucun test skipped
+- [x] Couverture des 3 services critiques
 
 ## Dépendances
 
