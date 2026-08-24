@@ -436,6 +436,49 @@ export interface ApiChannelListingChannelListing extends Struct.CollectionTypeSc
   };
 }
 
+export interface ApiMarketplaceSyncEventMarketplaceSyncEvent extends Struct.CollectionTypeSchema {
+  collectionName: 'marketplace_sync_events';
+  info: {
+    description: 'Marketplace synchronization audit and event logs';
+    displayName: 'Marketplace Sync Event';
+    pluralName: 'marketplace-sync-events';
+    singularName: 'marketplace-sync-event';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    action: Schema.Attribute.Enumeration<
+      ['search_release', 'check_completeness', 'publish_listing', 'mark_out_of_stock']
+    > &
+      Schema.Attribute.Required;
+    channel: Schema.Attribute.Enumeration<['discogs']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'discogs'>;
+    channelListing: Schema.Attribute.Relation<'manyToOne', 'api::channel-listing.channel-listing'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::marketplace-sync-event.marketplace-sync-event'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.String & Schema.Attribute.Required;
+    payload: Schema.Attribute.JSON;
+    product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
+    publishedAt: Schema.Attribute.DateTime;
+    sellableUnit: Schema.Attribute.Relation<'manyToOne', 'api::sellable-unit.sellable-unit'>;
+    status: Schema.Attribute.Enumeration<['success', 'failed', 'pending']> &
+      Schema.Attribute.Required;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'> &
+      Schema.Attribute.Required;
+    timestamp: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
@@ -978,6 +1021,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::channel-listing.channel-listing': ApiChannelListingChannelListing;
+      'api::marketplace-sync-event.marketplace-sync-event': ApiMarketplaceSyncEventMarketplaceSyncEvent;
       'api::product.product': ApiProductProduct;
       'api::sellable-unit.sellable-unit': ApiSellableUnitSellableUnit;
       'api::tenant.tenant': ApiTenantTenant;

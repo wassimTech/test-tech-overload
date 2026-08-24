@@ -36,9 +36,9 @@ Créer le content type MarketplaceSyncEvent (collection) pour les logs d'audit.
 
 ## Critères d'acceptation
 
-- [ ] Strapi démarre sans erreur
-- [ ] MarketplaceSyncEvent visible avec ses 3 relations optionnelles
-- [ ] Actions enum : `search_release`, `check_completeness`, `publish_listing`, `mark_out_of_stock`
+- [x] Strapi démarre sans erreur
+- [x] MarketplaceSyncEvent visible avec ses 3 relations optionnelles
+- [x] Actions enum : `search_release`, `check_completeness`, `publish_listing`, `mark_out_of_stock`
 
 ## Dépendances
 
