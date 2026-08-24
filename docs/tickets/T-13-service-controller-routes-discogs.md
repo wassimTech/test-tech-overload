@@ -59,13 +59,13 @@ Le ticket principal — créer le service d'orchestration Discogs, le controller
 
 ## Critères d'acceptation
 
-- [ ] Chaque endpoint filtre par `tenantId` (multi-tenant scoping)
-- [ ] Chaque endpoint produit un `MarketplaceSyncEvent` (succès ou échec)
-- [ ] Erreurs standard : format Strapi (`ctx.throw`)
-- [ ] Réponses métier : JSON structuré
-- [ ] Le workflow complet search → attach → check → publish → sell fonctionne avec curl
-- [ ] `tsc --noEmit` passe
-- [ ] Controller ne contient aucune logique métier (SRP)
+- [x] Chaque endpoint filtre par `tenantId` (multi-tenant scoping)
+- [x] Chaque endpoint produit un `MarketplaceSyncEvent` (succès ou échec)
+- [x] Erreurs standard : format Strapi (`ctx.throw`)
+- [x] Réponses métier : JSON structuré
+- [x] Le workflow complet search → attach → check → publish → sell fonctionne avec curl
+- [x] `tsc --noEmit` passe
+- [x] Controller ne contient aucune logique métier (SRP)
 
 ## Dépendances
 
