@@ -31,9 +31,9 @@ Créer le content type ChannelListing (collection).
 
 ## Critères d'acceptation
 
-- [ ] Strapi démarre sans erreur
-- [ ] ChannelListing visible avec relation SellableUnit + Tenant
-- [ ] Status enum contient les 6 valeurs attendues
+- [x] Strapi démarre sans erreur
+- [x] ChannelListing visible avec relation SellableUnit + Tenant
+- [x] Status enum contient les 6 valeurs attendues
 
 ## Dépendances
 

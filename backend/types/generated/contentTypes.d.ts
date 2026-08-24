@@ -396,6 +396,46 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiChannelListingChannelListing extends Struct.CollectionTypeSchema {
+  collectionName: 'channel_listings';
+  info: {
+    description: 'Marketplace status and publication details for sellable units';
+    displayName: 'Channel Listing';
+    pluralName: 'channel-listings';
+    singularName: 'channel-listing';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    channel: Schema.Attribute.Enumeration<['discogs']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'discogs'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+    externalListingId: Schema.Attribute.String;
+    externalUrl: Schema.Attribute.String;
+    lastErrorMessage: Schema.Attribute.Text;
+    lastSyncedAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::channel-listing.channel-listing'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    publishedPrice: Schema.Attribute.Decimal;
+    sellableUnit: Schema.Attribute.Relation<'manyToOne', 'api::sellable-unit.sellable-unit'> &
+      Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<
+      ['not_published', 'pending', 'published', 'failed', 'removed', 'sync_error']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'not_published'>;
+    tenant: Schema.Attribute.Relation<'manyToOne', 'api::tenant.tenant'> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> & Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
@@ -937,6 +977,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::channel-listing.channel-listing': ApiChannelListingChannelListing;
       'api::product.product': ApiProductProduct;
       'api::sellable-unit.sellable-unit': ApiSellableUnitSellableUnit;
       'api::tenant.tenant': ApiTenantTenant;
