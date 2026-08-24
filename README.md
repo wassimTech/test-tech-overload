@@ -133,6 +133,15 @@ npm run dev:frontend
 
 > On your first visit to **[http://localhost:1337/admin](http://localhost:1337/admin)**, follow the prompt to create your local administrator credentials.
 
+### 5️⃣ Run the Automated End-to-End Workflow Test
+
+Execute and validate the full 12-step vinyl lifecycle (Catalog $\rightarrow$ Discogs Search $\rightarrow$ Auto-SKU $\rightarrow$ Publication $\rightarrow$ Sale $\rightarrow$ Audit Trail) in a single command:
+
+```bash
+npm run test:flow
+# (Equivalent to: bash test-flow.sh)
+```
+
 ---
 
 ## 5. Environment Configuration
@@ -211,6 +220,15 @@ Every domain entity is strictly scoped to a **`tenantId`** to prevent data cross
 ## 8. End-to-End Test Walkthrough & API Endpoints
 
 This walkthrough guides you through the full lifecycle of a vinyl record, from startup and tenant validation to marketplace synchronization, sale simulation, and persistent audit logging.
+
+> [!TIP]
+> **🚀 Automated 1-Click Execution :**
+> You can execute and validate all 12 steps automatically at once by running:
+>
+> ```bash
+> npm run test:flow
+> # (or: bash test-flow.sh)
+> ```
 
 > [!IMPORTANT]
 > **Dynamic IDs (`documentId` / `id` / `sku`) :**
@@ -729,13 +747,27 @@ npm run format
 npm run build
 ```
 
+### Automated Testing & E2E Validation
+
+```bash
+# Run the automated 12-step End-to-End workflow test
+npm run test:flow
+# (or: bash test-flow.sh)
+
+# Run all 16 Jest unit test suites (201 tests)
+npm test
+
+# Run Jest tests with coverage report
+npm test -- --coverage
+```
+
 ### Individual Service Checks
 
 ```bash
-# Backend only
+# Backend only (Type checking + ESLint)
 npm run check --workspace=backend
 
-# Frontend only
+# Frontend only (Type checking + ESLint)
 npm run check --workspace=frontend
 ```
 
