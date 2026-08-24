@@ -31,10 +31,10 @@ Crée un `MarketplaceSyncEvent` via `strapi.documents('api::marketplace-sync-eve
 
 ## Critères d'acceptation
 
-- [ ] Appeler `syncEventLogger.log(...)` crée un enregistrement en base
-- [ ] Le timestamp est automatique
-- [ ] Les relations optionnelles (product, sellableUnit, channelListing) fonctionnent
-- [ ] `tsc --noEmit` passe
+- [x] Appeler `syncEventLogger.log(...)` crée un enregistrement en base
+- [x] Le timestamp est automatique
+- [x] Les relations optionnelles (product, sellableUnit, channelListing) fonctionnent
+- [x] `tsc --noEmit` passe
 
 ## Dépendances
 
