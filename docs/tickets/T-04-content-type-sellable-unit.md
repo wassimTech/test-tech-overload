@@ -37,10 +37,10 @@ Créer le content type SellableUnit (collection). **Sans lifecycle hook** — le
 
 ## Critères d'acceptation
 
-- [ ] Strapi démarre sans erreur
-- [ ] SellableUnit visible dans l'admin avec relations Tenant + Product
-- [ ] Enums disc/sleeve condition contiennent les bonnes valeurs
-- [ ] `sku` a une contrainte d'unicité
+- [x] Strapi démarre sans erreur
+- [x] SellableUnit visible dans l'admin avec relations Tenant + Product
+- [x] Enums disc/sleeve condition contiennent les bonnes valeurs
+- [x] `sku` a une contrainte d'unicité
 
 ## Dépendances
 
